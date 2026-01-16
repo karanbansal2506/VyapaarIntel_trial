@@ -100,7 +100,7 @@ class RedditClient:
                 post_data = child["data"]
                 posts.append(post_data)
 
-            time.sleep(1.0 if not self.use_oauth else 0.5)
+            time.sleep(3.0 if not self.use_oauth else 1.0)
             logger.info(f"Searched r/{subreddit_name} with query '{query}': found {len(posts)} posts")
             return posts
 
