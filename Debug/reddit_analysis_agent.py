@@ -5,6 +5,9 @@ from typing import List, Dict, Any
 
 from google import genai
 from google.genai import types
+from vector_store import VectorStore
+
+vector_store = VectorStore()
 
 
 # ---------------- CONFIG ---------------- #
@@ -18,24 +21,28 @@ GEMINI_MODEL = "gemini-2.5-flash"
 
 # ---------------- HELPERS ---------------- #
 
-def extract_text_blocks(ingestion_output: Dict[str, Any]) -> List[str]:
-    """
-    Extract post titles and top comments from ingestion output.
-    """
-    texts = []
+#def extract_text_blocks(ingestion_output: Dict[str, Any]) -> List[str]:
+#    """
+ #   Extract post titles and top comments from ingestion output.
+  #  """
+ #   texts = []
 
-    for item in ingestion_output.get("results", []):
-        for post in item.get("posts", []):
-            title = post.get("title", "")
-            if title:
-                texts.append(title)
+  #  for item in ingestion_output.get("results", []):
+   #     for post in item.get("posts", []):
+    #        title = post.get("title", "")
+     #       if title:
+      #          texts.append(title)
+#
+ #           for comment in post.get("top_comments", []):
+  #              body = comment.get("body", "")
+   #             if body:
+    #                texts.append(body)
 
-            for comment in post.get("top_comments", []):
-                body = comment.get("body", "")
-                if body:
-                    texts.append(body)
+   # return texts
 
-    return texts
+def retrieve_context(query: str):
+    results = vector_store.search(query, k=10)
+    return results["documents"][0]
 
 
 def build_prompt(text_blocks: List[str], business_context: str) -> str:
@@ -95,7 +102,9 @@ def run_analysis(ingestion_output: Dict[str, Any]) -> Dict[str, Any]:
     """
     business_context = ingestion_output.get("business_description", "")
 
-    text_blocks = extract_text_blocks(ingestion_output)
+    query = " ".join(ingestion_output.get("query", []))
+    text_blocks = retrieve_context(query)
+
 
     if not text_blocks:
         return {

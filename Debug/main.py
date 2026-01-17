@@ -1,4 +1,5 @@
 import json
+from vector_store import VectorStore
 import logging
 import os
 import sys
@@ -23,7 +24,7 @@ class RedditIngestionService:
 
     def __init__(self):
         """Initialize service with Reddit client."""
-        self.reddit_client = RedditClient()
+        self.vector_store = VectorStore()
 
     def process_post(self, post: Dict[str, Any], comment_limit: int = 3) -> Dict[str, Any]:
         """
@@ -48,6 +49,26 @@ class RedditIngestionService:
 
         # Format comments
         formatted_comments = [ranker.format_comment(c) for c in top_comments]
+
+        # Store post title
+self.vector_store.add(
+    text=post.get("title", ""),
+    metadata={
+        "type": "post",
+        "subreddit": subreddit
+    }
+)
+
+# Store top comments
+for comment in formatted_comments:
+    self.vector_store.add(
+        text=comment["body"],
+        metadata={
+            "type": "comment",
+            "subreddit": subreddit,
+            "score": comment["score"]
+        }
+    )
 
         return {
             "title": post.get("title", ""),
