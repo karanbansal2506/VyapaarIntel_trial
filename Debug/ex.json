@@ -1,0 +1,13 @@
+{
+  "business_description": " the best shoes based on comfort, purpose, budget, and real user reviews",
+  "target_subreddits": [
+    "Sneakers",
+    "RunningShoeGeeks"
+  ],
+  "keywords": [
+    "best shoes for daily use",
+    "comfortable shoes for long hours",
+    "best running shoes"
+  ],
+  "posts_limit_per_subreddit": 20
+}
